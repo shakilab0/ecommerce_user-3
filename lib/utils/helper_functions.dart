@@ -19,4 +19,5 @@ String getPriceAfterDiscount(num price,num discount){
   return (price-discountAmount).toStringAsFixed(0);
 }
 
-String get generateOrderId =>"ecom_${getFormattedDate(DateTime.now(),pattern: 'yyyyMMdd_HH:mm:ss')}";
+String get generateOrderId =>
+    'PB_${getFormattedDate(DateTime.now(), pattern: 'yyyyMMdd_HH:mm:ss')}';

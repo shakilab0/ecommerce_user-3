@@ -6,6 +6,20 @@ class OrderSuccessfulPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: const [
+            Icon(
+              Icons.done,
+              color: Colors.green,
+              size: 150,
+            ),
+            Text('Your order has been placed.')
+          ],
+        ),
+      ),
+    );
   }
 }

@@ -28,6 +28,7 @@ class _ViewProductPageState extends State<ViewProductPage> {
     Provider.of<ProductProvider>(context, listen: false).getAllProducts();
     Provider.of<ProductProvider>(context, listen: false).getAllPurchases();
     Provider.of<OrderProvider>(context, listen: false).getOrderConstants();
+    Provider.of<OrderProvider>(context, listen: false).getOrdersByUser();
     Provider.of<UserProvider>(context, listen: false).getUserInfo();
     Provider.of<CartProvider>(context, listen: false).getAllCartItemsByUser();
     super.didChangeDependencies();

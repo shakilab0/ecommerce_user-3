@@ -9,7 +9,7 @@ import '../utils/constants.dart';
 class CartItemView extends StatelessWidget {
    final CartModel cartModel;
    final CartProvider cartProvider;
-    CartItemView({Key? key,required this.cartModel,required this.cartProvider}) : super(key: key);
+    const CartItemView({Key? key,required this.cartModel,required this.cartProvider}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -1,11 +1,20 @@
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ecom_user_3/pages/view_product_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:provider/provider.dart';
 
+import '../auth/auth_service.dart';
+import '../models/address_model.dart';
+import '../models/date_model.dart';
+import '../models/order_model.dart';
 import '../providers/cart_provider.dart';
 import '../providers/order_provider.dart';
 import '../providers/user_provider.dart';
 import '../utils/constants.dart';
+import '../utils/helper_functions.dart';
+import 'order_successful_page.dart';
 
 class CheckoutPage extends StatefulWidget {
   static const String routeName = '/checkout';
@@ -209,7 +218,64 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
-  void _saveOrder() {}
+  void _saveOrder() async {
+    if (addressLine1Controller.text.isEmpty) {
+      showMsg(context, 'Please provide address line 1');
+      return ;
+    }
+
+    if (zipCodeController.text.isEmpty) {
+      showMsg(context, 'Please provide zipcode');
+      return;
+    }
+
+    if (city == null) {
+      showMsg(context, 'Please select your city');
+      return;
+    }
+
+    EasyLoading.show(status: 'Please wait');
+
+    final orderModel = OrderModel(
+      orderId: generateOrderId,
+      userId: AuthService.currentUser!.uid,
+      orderStatus: OrderStatus.pending,
+      payMethod: paymentMethodGroupValue,
+      grandTotal: orderProvider.getGrandTotal(cartProvider.getCartSubTotal()),
+      discount: orderProvider.orderConstantModel.discount,
+      vat: orderProvider.orderConstantModel.vat,
+      deliveryCharge: orderProvider.orderConstantModel.deliveryCharge,
+      orderDate: DateModel(
+        timestamp: Timestamp.fromDate(DateTime.now()),
+        day: DateTime.now().day,
+        month: DateTime.now().month,
+        year: DateTime.now().year,
+      ),
+      deliveryAddress: AddressModel(
+        addressLine1: addressLine1Controller.text,
+        addressLine2: addressLine2Controller.text,
+        zipcode: zipCodeController.text,
+        city: city,
+      ),
+      productDetails: cartProvider.cartList,
+    );
+
+    print(orderModel.deliveryAddress.city);
+
+
+    try {
+      print('start');
+      await orderProvider.saveOrder(orderModel);
+      EasyLoading.dismiss();
+      Navigator.pushNamedAndRemoveUntil(context, OrderSuccessfulPage.routeName,
+          ModalRoute.withName(ViewProductPage.routeName));
+      print('success');
+    } catch (error) {
+      EasyLoading.dismiss();
+      print(error.toString());
+      showMsg(context, error.toString());
+    }
+  }
 
   void setAddressIfExists() {
     final userModel = userProvider.userModel;

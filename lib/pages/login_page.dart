@@ -150,6 +150,7 @@ class _LoginPageState extends State<LoginPage> {
       try {
         if (tag) {
           await AuthService.login(email, password);
+          EasyLoading.dismiss();
         } else {
           if (AuthService.currentUser != null) {
             final credential =

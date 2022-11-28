@@ -43,7 +43,7 @@ class CartPage extends StatelessWidget {
                 padding: const EdgeInsets.all(12),
                 child: Row(
                   children: [
-                    const Expanded(child: Text('SUBTOTAL: $currencySymbol')),
+                    Expanded(child: Text('SUBTOTAL: $currencySymbol${provider.getCartSubTotal()}')),
                     OutlinedButton(
                       onPressed: provider.getCartSubTotal == 0 ? null : (){
                         Navigator.pushNamed(context, CheckoutPage.routeName);

@@ -5,6 +5,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:provider/provider.dart';
 import '../auth/auth_service.dart';
+import '../models/notification_model.dart';
 import '../models/product_model.dart';
 import '../providers/cart_provider.dart';
 import '../providers/product_provider.dart';
@@ -54,23 +55,26 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(productModel.productName), actions: [
-        TextButton(
-            onPressed: () {},
-            child: Column(
-              children: const [
-                Icon(Icons.favorite, color: Colors.white,),
-                Text("Favourite", style: TextStyle(color: Colors.white,),
-                )
-              ],
-            )),
-        TextButton(
-            onPressed: () {},
-            child: Column(
-              children: const [Icon(Icons.shopping_cart, color: Colors.white,),
-                Text("Cart", style: TextStyle(color: Colors.white,),
-                ),
-              ],
-            )),
+        // TextButton(
+        //     onPressed: () {},
+        //     child: Column(
+        //       children: const [
+        //         Icon(Icons.favorite, color: Colors.white,),
+        //         Text("Favourite", style: TextStyle(color: Colors.white,),
+        //         )
+        //       ],
+        //     )),
+        // TextButton(
+        //     onPressed: () {},
+        //     child: Column(
+        //       children: const [Icon(Icons.shopping_cart, color: Colors.white,),
+        //         Text("Cart", style: TextStyle(color: Colors.white,),
+        //         ),
+        //       ],
+        //     )),
+
+
+
         // Expanded(
         //   child: Consumer<CartProvider>(
         //     builder: (context, provider, child) {
@@ -362,6 +366,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                     OutlinedButton(
                       onPressed: () async {
                         if (txtController.text.isEmpty) return;
+
                         if (AuthService.currentUser!.isAnonymous) {
                           showCustomDialog(
                               context: context,
@@ -373,8 +378,24 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                               });
                         } else {
                           EasyLoading.show(status: "Please Wait");
-                          productProvider.addComment(productModel.productId!,
-                              txtController.text, userProvider.userModel!);
+
+                          final commentModel = CommentModel(
+                            userModel: userProvider.userModel!,
+                            productId: productModel.productId!,
+                            comment: txtController.text,
+                            date: getFormattedDate(DateTime.now(), pattern: 'dd/MM/yyyy hh:mm:s a'),
+                          );
+
+                          productProvider.addComment(commentModel);
+
+                          final notification=NotificationModel(
+                            id: DateTime.now().millisecondsSinceEpoch.toString(),
+                            type: NotificationType.comment,
+                            message: " a new Comment ${productModel.productName} is waiting for your approved",
+                            commentModel: commentModel,
+                          );
+                          await productProvider.addNotification(notification);
+
                           EasyLoading.dismiss();
                           focusNode.unfocus();
                           showMsg(context, "Thanks your feedback");
@@ -427,8 +448,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                             ),
                           ),
                         ],
-                      ))
-                          .toList(),
+                      )).toList(),
                     );
                   }
                 }

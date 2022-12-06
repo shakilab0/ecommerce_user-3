@@ -40,6 +40,7 @@ dependencies:
   firebase_auth:
   cloud_firestore:
   firebase_storage:
+  firebase_analytics:
   provider:
   intl:
   image_picker:
@@ -51,6 +52,8 @@ dependencies:
   country_state_city_pro:
   location_picker_flutter_map:
   flutter_rating_bar:
+  firebase_messaging:
+  flutter_local_notifications:
 
 
 dev_dependencies:

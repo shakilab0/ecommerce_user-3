@@ -15,6 +15,10 @@ abstract class OrderStatus{
 abstract class PaymentMethod{
   static const String cod='Cash on Delivery';
   static const String online='Online Payment';
+}
 
-
+abstract class NotificationType {
+  static const String comment = 'New Comment';
+  static const String order = 'New Order';
+  static const String user = 'New User';
 }

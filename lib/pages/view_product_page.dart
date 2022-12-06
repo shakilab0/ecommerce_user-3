@@ -1,5 +1,8 @@
 
+import 'package:ecom_user_3/pages/promo_code_page.dart';
+import 'package:ecom_user_3/pages/user_profile_page.dart';
 import 'package:ecom_user_3/providers/cart_provider.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -10,6 +13,7 @@ import '../models/category_model.dart';
 import '../providers/order_provider.dart';
 import '../providers/product_provider.dart';
 import '../providers/user_provider.dart';
+import '../utils/notification_service.dart';
 
 class ViewProductPage extends StatefulWidget {
   static const String routeName = '/viewproduct';
@@ -21,6 +25,22 @@ class ViewProductPage extends StatefulWidget {
 
 class _ViewProductPageState extends State<ViewProductPage> {
 
+  CategoryModel? categoryModel;
+
+  @override
+  void initState() {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      //print('Got a message whilst in the foreground!');
+      //print('Message data: ${message.data}');
+      if (message.notification != null) {
+        //print('Message also contained a notification: ${message.notification}');
+        NotificationService notificationService = NotificationService();
+        notificationService.sendNotifications(message);
+      }
+    });
+    setupInteractedMessage();
+    super.initState();
+  }
 
   @override
   void didChangeDependencies() {
@@ -33,7 +53,27 @@ class _ViewProductPageState extends State<ViewProductPage> {
     Provider.of<CartProvider>(context, listen: false).getAllCartItemsByUser();
     super.didChangeDependencies();
   }
-  CategoryModel? categoryModel;
+
+
+  Future<void> setupInteractedMessage() async {
+    RemoteMessage? initialMessage =
+    await FirebaseMessaging.instance.getInitialMessage();
+    if (initialMessage != null) {
+      _handleMessage(initialMessage);
+    }
+    FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
+  }
+
+  void _handleMessage(RemoteMessage message) {
+    if(message.data["key"]=='promo'){
+      Navigator.pushNamed(context, PromoCodePage.routeName,arguments: message.data['value']);
+    }else if(message.data["key"]=='user'){
+      Navigator.pushNamed(context, UserProfilePage.routeName );
+    }
+
+    print("Remote message ${message.toMap()}");
+  }
+
 
   @override
   Widget build(BuildContext context) {

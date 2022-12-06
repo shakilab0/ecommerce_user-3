@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecom_user_3/models/comment_model.dart';
+import 'package:ecom_user_3/models/notification_model.dart';
 import 'package:ecom_user_3/models/order_model.dart';
 import 'package:ecom_user_3/models/rating_model.dart';
 import 'package:ecom_user_3/models/user_model.dart';
@@ -156,7 +157,8 @@ class DbHelper {
   }
 
   static Future<void> addToCart(String uid, CartModel cartModel) {
-    return _db.collection(collectionUser)
+    return _db
+        .collection(collectionUser)
         .doc(uid)
         .collection(collectionCart)
         .doc(cartModel.productId)
@@ -179,7 +181,8 @@ class DbHelper {
   }
 
   static Future<void>updateCartQuantity(String uid,CartModel cartModel){
-    return _db.collection(collectionUser)
+    return _db
+        .collection(collectionUser)
         .doc(uid)
         .collection(collectionCart)
         .doc(cartModel.productId)
@@ -187,23 +190,22 @@ class DbHelper {
   }
 
   static Future<void> clearCart(String uid, List<CartModel> cartList) {
-    final wb=_db.batch();
-    for(final cartModel in cartList){
-      final doc=_db.collection(collectionCart)
+    final wb = _db.batch();
+    for (final cartModel in cartList) {
+      final doc = _db
+          .collection(collectionUser)
           .doc(uid)
           .collection(collectionCart)
           .doc(cartModel.productId);
       wb.delete(doc);
     }
     return wb.commit();
-
   }
 
 
   static Future<void> saveOrder(OrderModel orderModel) async {
     final wb = _db.batch();
     final orderDoc = _db.collection(collectionOrder).doc(orderModel.orderId);
-    print('done');
     wb.set(orderDoc, orderModel.toMap());
     for (final cartModel in orderModel.productDetails) {
       final proSnapshot = await _db
@@ -231,6 +233,12 @@ class DbHelper {
         userDoc, {userFieldAddressModel: orderModel.deliveryAddress.toMap()});
     return wb.commit();
 
+  }
+
+  static Future<void> addNotification(NotificationModel notification) {
+    return _db.collection(collectionNotification)
+        .doc(notification.id)
+        .set(notification.toMap());
   }
 
 

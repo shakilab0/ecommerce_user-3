@@ -21,8 +21,7 @@ class CartModel{
     required this.productName,
     required this.productImageUrl,
     this.quantity=1,
-    required this.salePrice,
-  });
+    required this.salePrice});
 
 
 

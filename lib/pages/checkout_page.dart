@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import '../auth/auth_service.dart';
 import '../models/address_model.dart';
 import '../models/date_model.dart';
+import '../models/notification_model.dart';
 import '../models/order_model.dart';
 import '../providers/cart_provider.dart';
 import '../providers/order_provider.dart';
@@ -177,8 +178,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
-
-
   Widget buildPaymentMethodSection() {
     return Card(
       child: Padding(
@@ -235,7 +234,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
     }
 
     EasyLoading.show(status: 'Please wait');
-
     final orderModel = OrderModel(
       orderId: generateOrderId,
       userId: AuthService.currentUser!.uid,
@@ -260,20 +258,23 @@ class _CheckoutPageState extends State<CheckoutPage> {
       productDetails: cartProvider.cartList,
     );
 
-    print(orderModel.deliveryAddress.city);
-
-
     try {
-      print('start');
       await orderProvider.saveOrder(orderModel);
+
+      final notification=NotificationModel(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        type: NotificationType.order,
+        message: "You have a new order#${orderModel.orderId}",
+        orderModel: orderModel,
+      );
+      await orderProvider.addNotification(notification);
       EasyLoading.dismiss();
       Navigator.pushNamedAndRemoveUntil(context, OrderSuccessfulPage.routeName,
           ModalRoute.withName(ViewProductPage.routeName));
-      print('success');
     } catch (error) {
       EasyLoading.dismiss();
       print(error.toString());
-      showMsg(context, error.toString());
+      showMsg(context, "failed to save");
     }
   }
 

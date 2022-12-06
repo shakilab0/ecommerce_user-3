@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:ecom_user_3/auth/auth_service.dart';
 import 'package:ecom_user_3/models/comment_model.dart';
+import 'package:ecom_user_3/models/notification_model.dart';
 import 'package:ecom_user_3/models/rating_model.dart';
 import 'package:ecom_user_3/models/user_model.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -133,13 +134,7 @@ class ProductProvider extends ChangeNotifier {
   }
 
 
-  Future<void> addComment(String proId, String comment, UserModel userModel) {
-    final commentModel = CommentModel(
-      userModel: userModel,
-      productId: proId,
-      comment: comment,
-      date: getFormattedDate(DateTime.now(), pattern: 'dd/MM/yyyy hh:mm:s a'),
-    );
+  Future<void> addComment(CommentModel commentModel) {
     return DbHelper.addComment(commentModel);
   }
 
@@ -149,6 +144,10 @@ class ProductProvider extends ChangeNotifier {
             (index) => CommentModel.fromMap(snapshot.docs[index].data()));
     return commentList;
  }
+
+  Future<void>addNotification(NotificationModel notification) {
+    return DbHelper.addNotification(notification);
+  }
 
 
 

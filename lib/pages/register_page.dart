@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ecom_user_3/pages/register_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -12,16 +11,16 @@ import '../utils/all_color_pro.dart';
 import '../utils/helper_functions.dart';
 import 'launcher_page.dart';
 
-class LoginPage extends StatefulWidget {
-  static const String routeName = '/login';
+class RegisterPage extends StatefulWidget {
+  static const String routeName = '/register';
 
-  const LoginPage({Key? key}) : super(key: key);
+  const RegisterPage({Key? key}) : super(key: key);
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -32,7 +31,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     isAnonymous=AuthService.currentUser==null?false:AuthService.currentUser!.isAnonymous;
-   //_passwordController.text = '123456';
+    //_passwordController.text = '123456';
     super.initState();
   }
 
@@ -56,13 +55,13 @@ class _LoginPageState extends State<LoginPage> {
         children: [
           Container(
             decoration: const BoxDecoration(
-                image: DecorationImage(image: AssetImage('assets/background.jpg'), fit: BoxFit.cover),
+                image: DecorationImage(image: AssetImage('assets/background.jpg'),
+                    fit: BoxFit.cover)
             ),
           ),
           Container(
             decoration: const BoxDecoration(
               color: transparentYellow,
-
             ),
           ),
           Padding(
@@ -73,7 +72,6 @@ class _LoginPageState extends State<LoginPage> {
                 const Spacer(flex: 3),
                 welcomeBack,
                 subTitle,
-
                 const Spacer(flex: 2),
                 SizedBox(
                   height: 280,
@@ -85,7 +83,7 @@ class _LoginPageState extends State<LoginPage> {
                           height: 180,
                           width: MediaQuery.of(context).size.width,
                           decoration:  BoxDecoration(
-                              color: const Color.fromRGBO(255, 255, 255, 0.8),
+                            color: const Color.fromRGBO(255, 255, 255, 0.8),
                             borderRadius: BorderRadius.circular(10),
                           ),
 
@@ -127,7 +125,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                         Positioned(
-                          bottom: 20,
+                          bottom: 65,
                           left: MediaQuery.of(context).size.width / 4,
                           child: Column(
                             children: [
@@ -153,25 +151,18 @@ class _LoginPageState extends State<LoginPage> {
                                 width: MediaQuery.of(context).size.width / 2,
                                 child: TextButton(
                                   onPressed: (){
-                                    _authenticate(true);
+                                    _authenticate(false);
                                   },
-                                  child: const Text("Log In",
-                                     style: TextStyle(
+                                  child: const Text("Register",
+                                    style: TextStyle(
                                         color: Color(0xfffefefe),
                                         fontWeight: FontWeight.w600,
                                         fontStyle: FontStyle.normal,
                                         fontSize: 25.0),
-                                 ),
+                                  ),
 
                                 ),
                               ),
-                              TextButton(
-                                  onPressed: (){
-                                    Navigator.pushReplacementNamed(context, RegisterPage.routeName);
-                                  },
-                                  child: const Text("Register Here",style: TextStyle(fontSize: 18),)
-                              ),
-
                             ],
                           ),
                         ),
@@ -180,98 +171,75 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
 
-                Text(_errMsg, style: const TextStyle(fontSize: 18, color: Colors.red),),
+                const Spacer(flex: 1),
+                Column(
+                  children: [
+                    const Text('You can sign in with',
+                      style: TextStyle(fontSize: 15.0, fontStyle: FontStyle.italic, color: Colors.white),
+                    ),
+                    const SizedBox(height: 15,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        InkWell(
+                          onTap: (){},
+                          child: Container(
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.white),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            height: 50,
+                            width: 50,
+                            child: Image.asset("assets/f.png",color: Colors.white,),
+                          ),
+                        ),
+                        const SizedBox(width: 17,),
+                        InkWell(
+                          onTap: (){
+                            _signInWithGoogleAccount();
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.white),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            height: 50,
+                            width: 50,
+                            child: Image.asset("assets/g.png"),
+                          ),
+                        ),
+                        const SizedBox(width: 17,),
+                        InkWell(
+                          onTap: () {
+                            EasyLoading.show(status: "Please Wait");
+                            AuthService.signInAnonymously().then((value){
+                              EasyLoading.dismiss();
+                              Navigator.pushReplacementNamed(context, LauncherPage.routeName);
+                            });
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.white),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            height: 50,
+                            width: 50,
+                            child: Column(
+                              children: const [
+                                Icon(Icons.directions_walk,size: 30,color: Colors.white,),
+                                Text("Guest",style: TextStyle(color: Colors.white,fontSize: 15),)
+                              ],
+                            ),
+                            //child: Icon(Icons.directions_walk,size: 30,color: Colors.white,)
+                          ),
+                        ),
 
-                const Spacer(flex: 2),
-                forgotPassword
+                      ],
+                    ),
+                  ],
+                ),
+                const Spacer(),
 
-                // Center(
-                //   child: Form(
-                //     key: _formKey,
-                //     child: ListView(
-                //       padding: const EdgeInsets.all(16),
-                //       shrinkWrap: true,
-                //       children: [
-                //         TextFormField(
-                //           controller: _emailController,
-                //           keyboardType: TextInputType.emailAddress,
-                //           decoration: const InputDecoration(
-                //             labelText: 'Email Address',
-                //             prefixIcon: Icon(Icons.email),
-                //             filled: true,
-                //           ),
-                //           validator: (value) {
-                //             if (value == null || value.isEmpty) {
-                //               return 'This field must not be empty';
-                //             }
-                //             return null;
-                //           },
-                //         ),
-                //         const SizedBox(height: 5,),
-                //         TextFormField(
-                //           controller: _passwordController,
-                //           obscureText: true,
-                //           decoration: const InputDecoration(
-                //             labelText: 'Password',
-                //             prefixIcon: Icon(Icons.lock),
-                //             filled: true,
-                //           ),
-                //           validator: (value) {
-                //             if (value == null || value.isEmpty) {
-                //               return 'This field must not be empty';
-                //             }
-                //             return null;
-                //           },
-                //         ),
-                //         const SizedBox(
-                //           height: 10,
-                //         ),
-                //         ElevatedButton(
-                //           onPressed: () {
-                //             _authenticate(true);
-                //           },
-                //           child: const Text('Login'),
-                //         ),
-                //         Row(
-                //           mainAxisAlignment: MainAxisAlignment.center,
-                //           children: [
-                //             const Text('New User? '),
-                //             TextButton(
-                //               onPressed: () {
-                //                 _authenticate(false);
-                //               },
-                //               child: const Text('Register here'),
-                //             ),
-                //           ],
-                //         ),
-                //         const SizedBox(
-                //           height: 10,
-                //         ),
-                //         Text(
-                //           _errMsg,
-                //           style: const TextStyle(fontSize: 18, color: Colors.red),
-                //         ),
-                //         ListTile(
-                //           onTap: () {
-                //             _signInWithGoogleAccount();
-                //           },
-                //           leading: const Icon(Icons.g_mobiledata),
-                //           title: const Text('SIGIN IN WITH GOOGLE'),
-                //         ),
-                //         TextButton(
-                //           onPressed: () {
-                //             EasyLoading.show(status: "Please Wait");
-                //             AuthService.signInAnonymously().then((value){
-                //               EasyLoading.dismiss();
-                //               Navigator.pushReplacementNamed(context, LauncherPage.routeName);
-                //             });
-                //           },
-                //           child: const Text('Login as Guest'),
-                //         ),
-                //       ],
-                //     ),
-                //   ),
-                // ),
               ],
             ),
           ),
@@ -281,7 +249,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void  _authenticate(bool tag) async {
+  void _authenticate(bool tag) async {
     if (_formKey.currentState!.validate()) {
       EasyLoading.show(status: 'Please wait', dismissOnTap: false);
       final email = _emailController.text;
@@ -321,12 +289,39 @@ class _LoginPageState extends State<LoginPage> {
       } on FirebaseAuthException catch (error) {
         EasyLoading.dismiss();
         setState(() {
-          print("Error: $error");
-          _errMsg = "Do not Match email or password try again or\n register please.";
+          _errMsg = error.message!;
         });
       }
     }
   }
+
+
+  void _signInWithGoogleAccount() async {
+    try {
+      final credential = await AuthService.signInWithGoogle();
+      final userExists = await userProvider.doesUserExist(credential.user!.uid);
+      if (!userExists) {
+        EasyLoading.show(status: 'Redirecting user...');
+        final userModel = UserModel(
+          userId: credential.user!.uid,
+          email: credential.user!.email!,
+          userCreationTime: Timestamp.fromDate(DateTime.now()),
+          displayName: credential.user!.displayName,
+          imageUrl: credential.user!.photoURL,
+          phone: credential.user!.phoneNumber,
+        );
+        await userProvider.addUser(userModel);
+        EasyLoading.dismiss();
+      }
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, LauncherPage.routeName);
+      }
+    } catch (error) {
+      EasyLoading.dismiss();
+      rethrow;
+    }
+  }
+
 
   Future<void> convertAnonymousUserIntoRealAccount(
       AuthCredential credential) async {
@@ -369,7 +364,7 @@ class _LoginPageState extends State<LoginPage> {
 
 
 
-Widget welcomeBack = const Text('Welcome Back. ',
+Widget welcomeBack = const Text('Glad To Meet You. ',
   style: TextStyle(
       color: Colors.white,
       fontSize: 34.0,
@@ -385,39 +380,14 @@ Widget welcomeBack = const Text('Welcome Back. ',
 
 Widget subTitle = const Padding(
     padding: EdgeInsets.only(right: 1.0),
-    child: Text(
-      'Login to your account using\nEmail or Gmail',
+    child: Text('Create your new account for \n future user',
       style: TextStyle(
         color: Colors.white,
         fontSize: 16.0,
       ),
     ));
 
-Widget forgotPassword = Padding(
-  padding: const EdgeInsets.only(bottom: 20),
-  child: Row(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: <Widget>[
-      const Text('Forgot your password? ',
-        style: TextStyle(
-          fontStyle: FontStyle.italic,
-          color: Color.fromRGBO(255, 255, 255, 0.5),
-          fontSize: 14.0,
-        ),
-      ),
-      InkWell(
-        onTap: () {},
-        child: const Text('Reset password',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 14.0,
-          ),
-        ),
-      ),
-    ],
-  ),
-);
+
 
 
 

@@ -1,11 +1,11 @@
 
+import 'package:ecom_user_3/customwidgets/homepage_bottom_bar.dart';
 import 'package:ecom_user_3/pages/promo_code_page.dart';
 import 'package:ecom_user_3/pages/user_profile_page.dart';
 import 'package:ecom_user_3/providers/cart_provider.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../customwidgets/cart_bubble_view.dart';
 import '../customwidgets/main_drawer.dart';
 import '../customwidgets/product_grid_item_view.dart';
@@ -13,6 +13,7 @@ import '../models/category_model.dart';
 import '../providers/order_provider.dart';
 import '../providers/product_provider.dart';
 import '../providers/user_provider.dart';
+import '../utils/all_color_pro.dart';
 import '../utils/notification_service.dart';
 
 class ViewProductPage extends StatefulWidget {
@@ -25,10 +26,12 @@ class ViewProductPage extends StatefulWidget {
 
 class _ViewProductPageState extends State<ViewProductPage> {
 
+
   CategoryModel? categoryModel;
 
   @override
   void initState() {
+
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       //print('Got a message whilst in the foreground!');
       //print('Message data: ${message.data}');
@@ -80,7 +83,6 @@ class _ViewProductPageState extends State<ViewProductPage> {
     return Scaffold(
       drawer: const MainDrawer(),
       appBar: AppBar(
-        title: const Text('All Product'),
         actions: const [
           CartBubbleView(),
         ],
@@ -90,6 +92,7 @@ class _ViewProductPageState extends State<ViewProductPage> {
       body: Consumer<ProductProvider>(
         builder: (context, provider, child) => Column(
           children: [
+
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: DropdownButtonFormField<CategoryModel>(
